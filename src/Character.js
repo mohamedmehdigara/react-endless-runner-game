@@ -6,7 +6,7 @@ const Character = ({ position, jumping }) => {
     bottom: `${jumping ? '50px' : '0'}`,
     left: `${position}px`,
     width: '50px',
-    height: '100px', // Update the height to make it look like a robot
+    height: '100px', // Example: Adjust the character's height as needed
     backgroundColor: 'blue',
     transition: 'bottom 0.5s',
     display: 'flex', // Add flexbox display to center the robot's parts
@@ -43,6 +43,9 @@ const Character = ({ position, jumping }) => {
 
   return (
     <div style={characterStyle} className={characterClassName}>
+      
+
+
       <div style={headStyle}></div>
       <div style={bodyStyle}></div>
       <div style={armStyle}></div>
