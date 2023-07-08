@@ -28,94 +28,39 @@ const Game = () => {
   }, []);
 
   useEffect(() => {
-    // Generate obstacles at regular intervals
-    const obstacleInterval = setInterval(generateObstacle, 2000); // Example: Generate an obstacle every 2 seconds
-    // Update obstacles position and check collisions at a high frequency
-    const obstacleUpdateInterval = setInterval(updateObstacles, 1000 / 60);
-    // Check game over condition at a high frequency
-    const gameoverInterval = setInterval(checkGameOver, 1000 / 60);
+    const gameLoopInterval = setInterval(() => {
+      if (!gameOver) {
+        setPosition((prevPosition) => prevPosition + 5); // Example: Adjust the character speed as needed
+
+        // Check boundary to prevent character from going off the screen
+        const screenWidth = window.innerWidth;
+        const characterWidth = 50; // Adjust according to the character's width
+        const boundary = screenWidth - characterWidth;
+        if (position > boundary) {
+          setPosition(boundary);
+        }
+
+        // Add additional game state updates here
+      }
+    }, 1000 / 60);
 
     return () => {
-      clearInterval(obstacleInterval);
-      clearInterval(obstacleUpdateInterval);
-      clearInterval(gameoverInterval);
+      clearInterval(gameLoopInterval);
     };
-  }, []);
+  }, [gameOver]);
 
-  const generateObstacle = () => {
-    const newObstacle = {
-      id: Date.now(),
-      position: window.innerWidth,
-    };
-    setObstacles((prevState) => [...prevState, newObstacle]);
-  };
-
-  const updateObstacles = () => {
-    setObstacles((prevState) => {
-      const updatedObstacles = prevState.map((obstacle) => ({
-        ...obstacle,
-        position: obstacle.position - 5, // Example: Adjust the obstacle speed as needed
-      }));
-      return updatedObstacles.filter((obstacle) => obstacle.position > -100);
-    });
-  };
-
-  const checkCollisions = () => {
-    const characterBounds = document.querySelector('.character').getBoundingClientRect();
-
-    obstacles.forEach((obstacle) => {
-      const obstacleBounds = document.getElementById(obstacle.id).getBoundingClientRect();
-
-      if (
-        characterBounds.left < obstacleBounds.right &&
-        characterBounds.right > obstacleBounds.left &&
-        characterBounds.bottom > obstacleBounds.top &&
-        characterBounds.top < obstacleBounds.bottom
-      ) {
-        setGameOver(true);
-      }
-    });
-  };
-
-  const checkGameOver = () => {
-    checkCollisions();
-    // You can add additional game over conditions here if needed
-  };
-
-  const restartGame = () => {
-    setPosition(0);
-    setObstacles([]);
-    setPowerUps([]);
-    setScore(0);
-    setGameOver(false);
-  };
-
+  // Rest of the code
   return (
     <div>
       {gameOver ? (
         <div>
           <h1>Game Over</h1>
-          <button onClick={restartGame}>Restart</button>
+          <button onClick={() => setGameOver(false)}>Restart</button>
         </div>
       ) : (
         <>
           <Character position={position} jumping={jumping} />
           {/* Render other game components */}
-          {obstacles.map((obstacle) => (
-            <div
-              key={obstacle.id}
-              id={obstacle.id}
-              style={{
-                position: 'absolute',
-                bottom: '0',
-                left: `${obstacle.position}px`,
-                width: '50px',
-                height: '50px',
-                backgroundColor: 'red',
-              }}
-            ></div>
-          ))}
-          <div>Score: {score}</div>
         </>
       )}
     </div>
